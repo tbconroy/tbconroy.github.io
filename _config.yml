@@ -4,8 +4,8 @@ author: Tom Conroy
 description: >
   A collection of tronroy's (Tom Conroy's) collection of thoughts (ramblings) on
   web development and technology.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: ""
+url: "http://tronroy.com"
 twitter_username: tbconroy
 github_username:  tronroy
 
