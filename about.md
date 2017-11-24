@@ -3,4 +3,4 @@ layout: page
 title: "About"
 permalink: /about/
 ---
-In love with test driven developement and honing his object oriented design skills. Lately has been working with Ruby on Rails. Has been known to spend significant time with JavaScript, which includes dabbling in Node and front-end frameworks like React. Wants to learn functional programing and for that reason has his eye on Elm.
+Lives and works in New York City. In love with test driven developement and honing his Object Oriented design skills. Loads of exprience with Ruby on Rails but has been known to spend time with JavaScript, i.e. Node and front end frameworks like React. Also really interested in this whole functional programing thing.
