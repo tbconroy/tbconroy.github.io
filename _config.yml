@@ -1,11 +1,11 @@
-title: tronroy
+title: tbconroy
 email: tbconroy@gmail.com
 author: Tom Conroy
 description: A blog by Tom Conroy on programming and technology.
 baseurl: ""
-url: "http://tronroy.com"
+url: "http://tbconroy.com"
 twitter_username: tbconroy
-github_username:  tronroy
+github_username:  tbconroy
 
 # Build settings
 markdown: kramdown

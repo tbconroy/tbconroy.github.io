@@ -74,13 +74,13 @@ This controller expects a json request body with the following structure:
   // optional factory traits
   "traits":["admin","has_posts"],
   // any attributes for the factory you want to set, possible examples listed below
-  "name":"tronroy",
-  "email":"tronroy@example.com"
+  "name":"tbconroy",
+  "email":"tbconroy@example.com"
 }
 ```
 When posted to the `/factories` endpoint it would the equivalent of doing this with FactoryBot:
 ```ruby
-FactoryBot.create(:user, :admin, :has_posts, name: 'tronroy', email: 'tronroy@example.com')
+FactoryBot.create(:user, :admin, :has_posts, name: 'tbconroy', email: 'tbconroy@example.com')
 ```
 Of course you would have to have a `user` factory defined. For more information on FactoryBot on how to set it up in Rails I suggest reading the documentation.
 
@@ -110,8 +110,8 @@ before(() =>{
   cy.factoryBotCreate({
     factory: 'user',
     traits: ['admin','has_posts'],
-    name: 'tronroy',
-    email: 'tronroy@example.com'
+    name: 'tbconroy',
+    email: 'tbconroy@example.com'
   })
 })
 ```
