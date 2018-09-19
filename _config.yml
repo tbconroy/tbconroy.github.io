@@ -4,7 +4,6 @@ author: Tom Conroy
 description: A blog by Tom Conroy on programming and technology.
 baseurl: ""
 url: "http://tbconroy.com"
-twitter_username: tbconroy
 github_username:  tbconroy
 
 # Build settings
