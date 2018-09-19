@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Deploying a Jekyll Site on Github Pages with Travis CI"
+title:  "Deploying Jekyll Sites on Github Pages with Travis CI"
 date:   2017-09-09 17:44:06 -0400
 categories:
   - jekyll
