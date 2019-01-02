@@ -9,6 +9,7 @@ github_username:  tbconroy
 # Build settings
 markdown: kramdown
 theme: jekyll-whiteglass
+google_analytics: UA-131654422-1
 plugins:
   - jekyll-archives
   - jekyll-paginate
