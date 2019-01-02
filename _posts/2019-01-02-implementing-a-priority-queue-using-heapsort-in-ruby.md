@@ -218,7 +218,7 @@ class PriorityQueue
     left_child_index = index * 2
     right_child_index = index * 2 + 1
 
-    return if index >= last_index || left_child_index > last_index
+    return if left_child_index > last_index
 
     lesser_child_index = determine_lesser_child(left_child_index, right_child_index)
 
