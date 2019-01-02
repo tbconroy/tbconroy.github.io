@@ -73,11 +73,9 @@ It would result in:
 
 In the array representation this value would simply be inserted at the end:
 
-```
+```ruby
 [nil, 1, 4, 5, 8]
-
 # insert 3
-
 [nil, 1, 4, 5, 8, 3]
 ```
 
@@ -91,7 +89,7 @@ Now the heap has to be reordered so each parent is less than its children. This 
 8   3
 ```
 
-If is less than the parent then those values are swapped:
+If it is less than its parent then those values are swapped:
 
 ```
     1
@@ -144,7 +142,7 @@ class PriorityQueue
 end
 ```
 
-## Extracting Minimum Value
+## Extracting the Minimum Value
 
 The root node of the heap represents the minimum value in the queue. Once this value is removed from the queue the next minimum value must occupy the root position.
 
@@ -239,13 +237,16 @@ class PriorityQueue
       right_child_index
     end
   end
+
+  ...
+end
 ```
 
 ## Usage
 
 Here is an example of how this class would be used:
 
-```
+```ruby
 pq = PriorityQueue.new
 => #<PriorityQueue:0x00007ffa21145050 @heap=[nil]>
 pq.insert(100)
