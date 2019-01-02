@@ -9,7 +9,7 @@ categories:
   - min-heap
   - ruby
 ---
-Heaps are a tree data structure that can be implemented using an array. In this case a heap will be a binary min-heap, which means each parent node will be less than the value of each of, at most, two child nodes:
+Heaps are a tree data structure that can be implemented using an array. In this case a heap will be a binary min-heap, which means each parent node will be less than the value of each of, at most, two child nodes.
 
 ```
     1
@@ -19,9 +19,9 @@ Heaps are a tree data structure that can be implemented using an array. In this 
 8   4
 ```
 
-The above structure can be represented in an array like so:
+The above structure can be represented in an array:
 
-```
+```ruby
 [nil, 1, 3, 5, 8, 4]
 ```
 
@@ -29,11 +29,11 @@ Note the first element of the array (i = 0) is `nil` to simplify the implementat
 
 ## Traversing Array Representation of a Binary Heap
 
-To find the index of the left child of a index `i` of parent node in the array use `2 * i`
+To find the index of the left child of a index `i` of parent node in the array use `2 * i`.
 
-The index of the right child in the array is `(2 * i) + 1`
+The index of the right child in the array is `(2 * i) + 1`.
 
-To find the index of parent for a child of index `j` in the array is `j / 2`
+To find the index of parent for a child of index `j` in the array is `j / 2`.
 
 The above math works out if the root of the heap starts in the second container of the array, i.e., `i = 1`.
 
@@ -41,7 +41,7 @@ The above math works out if the root of the heap starts in the second container 
 
 In the ruby implementation the heap in our priority queue is initialized with a dummy `nil` value in the first container:
 
-```
+```ruby
 class PriorityQueue
   def initialize
     @heap = [nil]
@@ -51,7 +51,7 @@ end
 
 ## Inserting Values
 
-In heapsort the latest value is inserted in the next open leaf node going left to right. For example if 3 is inserted into the following:
+In heapsort the latest value is inserted in the next open leaf node going left to right. For example if `3` is inserted into the following heap:
 
 ```
     1
@@ -71,7 +71,7 @@ It would result in:
 8   3
 ```
 
-In practice using an array, this value would simply be inserted at the end of the array.
+In the array representation this value would simply be inserted at the end:
 
 ```
 [nil, 1, 4, 5, 8]
@@ -81,9 +81,7 @@ In practice using an array, this value would simply be inserted at the end of th
 [nil, 1, 4, 5, 8, 3]
 ```
 
-With the latest value inserted, it is then compared to its parent. If is less than parent then those values are swapped. This is done recursively up the tree until the it reaches the root or a parent with a value that is less than it.
-
-In the following example:
+Now the heap has to be reordered so each parent is less than its children. This is accomplished be comparing the last inserted value to its parent:
 
 ```
     1
@@ -93,7 +91,7 @@ In the following example:
 8   3
 ```
 
-This would result in:
+If is less than the parent then those values are swapped:
 
 ```
     1
@@ -103,9 +101,12 @@ This would result in:
 8   4
 ```
 
-In ruby this can be implemented with the following:
+This is done recursively up the tree until the it reaches the root or a parent with a value that is less than it.
 
-```
+
+In ruby this can be implemented like so:
+
+```ruby
 class PriorityQueue
   def initialize
     @heap = [nil]
@@ -147,7 +148,7 @@ end
 
 The root node of the heap represents the minimum value in the queue. Once this value is removed from the queue the next minimum value must occupy the root position.
 
-This can be accomplished via the following operations starting with the following initial heap:
+Starting with this initial heap:
 
 ```
     1
@@ -157,7 +158,7 @@ This can be accomplished via the following operations starting with the followin
 8   9
 ```
 
-The root node and the last rightmost node are swapped:
+The root node and the last right-most node are swapped:
 
 ```
     9
@@ -167,7 +168,7 @@ The root node and the last rightmost node are swapped:
 8   1
 ```
 
-The last rightmost node is removed:
+Then the last right-most node is removed:
 
 ```
     9
@@ -197,9 +198,9 @@ The the newly swapped child from the last operation is then compared to its smal
 9
 ```
 
-This can be implemented in ruby by extending the `PriorityQueue` class from above. Here the method next is added which returns the minimum value in the queue and reorders the heap:
+This can be implemented in ruby by extending the `PriorityQueue` class from above. Here the method `next` is added which returns the minimum value in the queue and reorders the heap:
 
-```
+```ruby
 class PriorityQueue
   ...
 
@@ -242,7 +243,7 @@ class PriorityQueue
 
 ## Usage
 
-This class can then be used like so:
+Here is an example of how this class would be used:
 
 ```
 pq = PriorityQueue.new
