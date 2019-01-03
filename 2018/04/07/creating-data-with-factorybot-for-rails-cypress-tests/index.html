@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Creating Data with FactoryBot for Rails Cypress Tests</title>
+  <meta name="description" content="I have been working with the wonderful and relatively new Cypress Test Runner to do integration testing for a Rails app with an extensive React/Redux frontend. It has been great. You can read about why it makes sense to use Cypress for testing Rails in this blog post.">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="http://tbconroy.com/2018/04/07/creating-data-with-factorybot-for-rails-cypress-tests/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="tbconroy" href="http://tbconroy.com/feed.xml">
+
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Creating Data with FactoryBot for Rails Cypress Tests">
+  <meta name="twitter:description" content="I have been working with the wonderful and relatively new Cypress Test Runner to do integration testing for a Rails app with an extensive React/Redux frontend. It has been great. You can read about...">
+  
+  
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet">
+
+  
+  <!-- Google Analytics -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-131654422-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">tbconroy</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/archives/">Archives</a>
+      
+        
+        <a class="page-link" href="https://github.com/tbconroy">GitHub</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Creating Data with FactoryBot for Rails Cypress Tests</h1>
+    
+    <p class="post-meta"><time datetime="2018-04-07T23:06:55+00:00" itemprop="datePublished">Apr 7, 2018</time> •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/cypress/">cypress</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/testing/">testing</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/rails/">rails</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/ruby/">ruby</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/javascript/">javascript</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/factory-bot/">factory bot</a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+
+
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>I have been working with the wonderful and relatively new <a href="https://www.cypress.io/">Cypress Test Runner</a> to do integration testing for a Rails app with an extensive React/Redux frontend. It has been great. You can read about why it makes sense to use Cypress for testing Rails in this <a href="https://www.simplethread.com/unblock-rails-ui-testing-cypress/">blog post</a>.</p>
+
+<p>Cypress doesn’t have any knowledge of the internals of whatever you are testing. So setting up and tearing down data for testing a Rails app can be a little tricky especially if you are used to having <a href="https://github.com/thoughtbot/factory_bot">FactoryBot</a> (formerly FactoryGirl) to do so. One suggested way to do this is by creating a endpoint in your app to which you can post data to from within your Cypress tests to and create whatever data is needed.</p>
+
+<p>Here is quick solution I came up with that does exactly this.</p>
+
+<h2 id="setting-it-up">Setting it up</h2>
+
+<p>First setup the route for the <code class="highlighter-rouge">/factories</code> endpoint in <code class="highlighter-rouge">config/routes.rb</code>:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="no">Rails</span><span class="p">.</span><span class="nf">env</span><span class="p">.</span><span class="nf">test?</span>
+  <span class="n">resources</span> <span class="ss">:factories</span><span class="p">,</span> <span class="ss">only: :create</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>Note that this route should only be available in your testing environment. It should NEVER be available in production, or probably any other environment, for obvious reasons.</p>
+
+<p>Next create the <code class="highlighter-rouge">FactoriesController</code> that allows one to post data to the <code class="highlighter-rouge">\factories</code> endpoint above.</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">require</span> <span class="s1">'factory_bot_rails'</span>
+
+<span class="k">class</span> <span class="nc">FactoriesController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="n">respond_to</span> <span class="ss">:json</span>
+  <span class="n">rescue_from</span> <span class="no">Exception</span><span class="p">,</span> <span class="ss">with: :show_errors</span>
+
+  <span class="k">def</span> <span class="nf">create</span>
+    <span class="n">render</span> <span class="ss">json: </span><span class="no">FactoryBot</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="n">factory</span><span class="p">,</span> <span class="o">*</span><span class="n">traits</span><span class="p">,</span> <span class="n">attributes</span><span class="p">).</span><span class="nf">to_json</span><span class="p">,</span> <span class="ss">status: </span><span class="mi">201</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">traits</span>
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="ss">:traits</span><span class="p">].</span><span class="nf">present?</span>
+      <span class="n">params</span><span class="p">[</span><span class="ss">:traits</span><span class="p">].</span><span class="nf">map</span> <span class="p">{</span> <span class="o">|</span><span class="n">_key</span><span class="p">,</span> <span class="n">trait</span><span class="o">|</span> <span class="n">trait</span><span class="p">.</span><span class="nf">to_sym</span> <span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">factory</span>
+    <span class="n">params</span><span class="p">[</span><span class="ss">:factory</span><span class="p">].</span><span class="nf">to_sym</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">attributes</span>
+    <span class="n">params</span><span class="p">.</span><span class="nf">except</span><span class="p">(</span><span class="ss">:factory</span><span class="p">,</span> <span class="ss">:traits</span><span class="p">,</span> <span class="ss">:controller</span><span class="p">,</span> <span class="ss">:action</span><span class="p">,</span> <span class="ss">:number</span><span class="p">).</span><span class="nf">symbolize_keys</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">show_errors</span><span class="p">(</span><span class="n">exception</span><span class="p">)</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="ss">error: </span><span class="s2">"</span><span class="si">#{</span><span class="n">exception</span><span class="p">.</span><span class="nf">class</span><span class="si">}</span><span class="s2">: </span><span class="si">#{</span><span class="n">exception</span><span class="p">.</span><span class="nf">to_s</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+      <span class="ss">backtrace: </span><span class="n">exception</span><span class="p">.</span><span class="nf">backtrace</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="n">render</span> <span class="ss">json: </span><span class="n">error</span><span class="p">,</span> <span class="ss">status: </span><span class="mi">400</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>This controller expects a json request body with the following structure:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">name</span><span class="w"> </span><span class="err">of</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">factory</span><span class="w">
+  </span><span class="s2">"factory"</span><span class="p">:</span><span class="s2">"user"</span><span class="p">,</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">optional</span><span class="w"> </span><span class="err">factory</span><span class="w"> </span><span class="err">traits</span><span class="w">
+  </span><span class="s2">"traits"</span><span class="p">:[</span><span class="s2">"admin"</span><span class="p">,</span><span class="s2">"has_posts"</span><span class="p">],</span><span class="w">
+  </span><span class="err">//</span><span class="w"> </span><span class="err">any</span><span class="w"> </span><span class="err">attributes</span><span class="w"> </span><span class="err">for</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">factory</span><span class="w"> </span><span class="err">you</span><span class="w"> </span><span class="err">want</span><span class="w"> </span><span class="err">to</span><span class="w"> </span><span class="err">set</span><span class="p">,</span><span class="w"> </span><span class="err">possible</span><span class="w"> </span><span class="err">examples</span><span class="w"> </span><span class="err">listed</span><span class="w"> </span><span class="err">below</span><span class="w">
+  </span><span class="s2">"name"</span><span class="p">:</span><span class="s2">"tbconroy"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"email"</span><span class="p">:</span><span class="s2">"tbconroy@example.com"</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>When posted to the <code class="highlighter-rouge">/factories</code> endpoint it would the equivalent of doing this with FactoryBot:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">FactoryBot</span><span class="p">.</span><span class="nf">create</span><span class="p">(</span><span class="ss">:user</span><span class="p">,</span> <span class="ss">:admin</span><span class="p">,</span> <span class="ss">:has_posts</span><span class="p">,</span> <span class="ss">name: </span><span class="s1">'tbconroy'</span><span class="p">,</span> <span class="ss">email: </span><span class="s1">'tbconroy@example.com'</span><span class="p">)</span>
+</code></pre></div></div>
+<p>Of course you would have to have a <code class="highlighter-rouge">user</code> factory defined. For more information on FactoryBot on how to set it up in Rails I suggest reading the documentation.</p>
+
+<p>When you successfully create a model instance using this endpoint it will return a serialized version of that instance’s attributes so that you can see exactly what is created in Cypress.</p>
+
+<p>If something goes wrong the response will include the error raised with a Rails stack trace to help debug any issues.</p>
+
+<h2 id="usage-with-cypress">Usage with Cypress</h2>
+
+<p>I created a helper for use in Cypress, called a <a href="https://docs.cypress.io/api/cypress-api/custom-commands.html">command</a>, that posts to the endpoint defined above.</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Cypress</span><span class="p">.</span><span class="nx">Commands</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="s1">'factoryBotCreate'</span><span class="p">,</span> <span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">cy</span><span class="p">.</span><span class="nx">request</span><span class="p">({</span>
+    <span class="na">url</span><span class="p">:</span> <span class="s1">'/factories'</span><span class="p">,</span>
+    <span class="na">method</span><span class="p">:</span> <span class="s1">'post'</span><span class="p">,</span>
+    <span class="na">form</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="na">failOnStatusCode</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="na">body</span><span class="p">:</span> <span class="nx">args</span>
+  <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div></div>
+<p>Because <code class="highlighter-rouge">failOnStatusCode</code> option is set to <code class="highlighter-rouge">true</code> for <code class="highlighter-rouge">cy.request</code> if the data fails to create on the Rails side the test will fail and output the factory error and stack trace in the test runner to help with debugging.</p>
+
+<p>This command can then be used in your Cypress test to create the same <code class="highlighter-rouge">user</code> from before:</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">before</span><span class="p">(()</span> <span class="o">=&gt;</span><span class="p">{</span>
+  <span class="nx">cy</span><span class="p">.</span><span class="nx">factoryBotCreate</span><span class="p">({</span>
+    <span class="na">factory</span><span class="p">:</span> <span class="s1">'user'</span><span class="p">,</span>
+    <span class="na">traits</span><span class="p">:</span> <span class="p">[</span><span class="s1">'admin'</span><span class="p">,</span><span class="s1">'has_posts'</span><span class="p">],</span>
+    <span class="na">name</span><span class="p">:</span> <span class="s1">'tbconroy'</span><span class="p">,</span>
+    <span class="na">email</span><span class="p">:</span> <span class="s1">'tbconroy@example.com'</span>
+  <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<h2 id="going-further">Going further</h2>
+<p>Cleaning your database after each test is important for testing consistency. Another action could be defined in the <code class="highlighter-rouge">FactoriesController</code> to handle this. One solution would be to use the <a href="https://github.com/DatabaseCleaner/database_cleaner">DatabaseCleaner gem</a> and the truncate cleaning strategy to wipe the entire database. You would obviously have to be sure not to inadvertently expose this endpoint in production.</p>
+
+  </div>
+
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy; Tom Conroy - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="http://tbconroy.com/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

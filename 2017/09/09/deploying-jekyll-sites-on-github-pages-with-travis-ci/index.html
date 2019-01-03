@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  
+  
+  <title>Deploying Jekyll Sites on Github Pages with Travis CI</title>
+  <meta name="description" content="I use Github Pages to host this blog because it is free with the basic Developer subscription. Jekyll is a static site generator that is supported by Github Pages. To create a personal site normally all you need to do is create a repo called &amp;lt;your_github_username&amp;gt;.github.io and commit your Jekyll project directory to that that repo and all the html and css your site needs will be built and served at your GitHub Pages url. You can even alter the apperance of your site without editing a CSS file using one of a few supported Jekyll themes that Github Pages supports.">
+  
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="canonical" href="http://tbconroy.com/2017/09/09/deploying-jekyll-sites-on-github-pages-with-travis-ci/">
+  
+  
+  <link rel="alternate" type="application/rss+xml" title="tbconroy" href="http://tbconroy.com/feed.xml">
+
+  
+
+  
+  <meta name="twitter:card" content="summary">
+  
+  <meta name="twitter:title" content="Deploying Jekyll Sites on Github Pages with Travis CI">
+  <meta name="twitter:description" content="I use Github Pages to host this blog because it is free with the basic Developer subscription. Jekyll is a static site generator that is supported by Github Pages. To create a personal site normall...">
+  
+  
+
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css?family=Bitter:400,400i,700" rel="stylesheet">
+
+  
+  <!-- Google Analytics -->
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-131654422-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+
+</head>
+
+
+  <body>
+
+    <header class="site-header">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">tbconroy</a>
+
+    <nav class="site-nav">
+      
+        
+        <a class="page-link" href="/about/">About</a>
+      
+        
+        <a class="page-link" href="/archives/">Archives</a>
+      
+        
+        <a class="page-link" href="https://github.com/tbconroy">GitHub</a>
+      
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    
+      <h1 class="post-title" itemprop="name headline">Deploying Jekyll Sites on Github Pages with Travis CI</h1>
+    
+    <p class="post-meta"><time datetime="2017-09-09T21:44:06+00:00" itemprop="datePublished">Sep 9, 2017</time> •
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/jekyll/">jekyll</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/github-pages/">github pages</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/travis-ci/">travis ci</a>,
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        <a href="/categories/ruby/">ruby</a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  
+
+
+
+</p>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>I use Github Pages to host this blog because it is free with the basic Developer subscription. Jekyll is a static site generator that is supported by Github Pages. To create a personal site normally all you need to do is create a repo called <code class="highlighter-rouge">&lt;your_github_username&gt;.github.io</code> and commit your Jekyll project directory to that that repo and all the html and css your site needs will be built and served at your GitHub Pages url. You can even alter the apperance of your site without editing a CSS file using one of a few supported Jekyll themes that Github Pages <a href="https://help.github.com/articles/creating-a-github-pages-site-with-the-jekyll-theme-chooser/">supports</a>.</p>
+
+<p>However, there are plenty more themes out there that are not supported by Github Pages, many of which are packaged in Ruby gems so that they can <a href="http://jekyllrb.com/docs/themes/#understanding-gem-based-themes">easily be added</a> to your Jekyll generated site. If you use an gem based themes unsupported by Github Pages, as I have, simply committing your Jekyll project directory no longer automatically builds and publishes site. You must either:</p>
+<ol>
+  <li>copy the relevant theme CSS and templates into your project and lose the ability to easily incorporate updates to the theme from it’s maintainer using <code class="highlighter-rouge">bundle update</code></li>
+  <li>or manually build the site locally and commit the generated files to the <code class="highlighter-rouge">master</code> branch of your <code class="highlighter-rouge">&lt;your_github_username&gt;.github.io</code> repo.</li>
+</ol>
+
+<p>For this blog I use a variation on the second option, but instead of building my site locally and committing it myself, I use Travis CI to automate this whenever I push changes to a <code class="highlighter-rouge">source</code> branch. Essentially <code class="highlighter-rouge">source</code> contains the Jekyll project directory, and the <code class="highlighter-rouge">master</code>contains the Jekyll generated html and css. It is in this <code class="highlighter-rouge">master</code> branch where GitHub Pages is <a href="https://help.github.com/articles/user-organization-and-project-pages/#user--organization-pages">configured to look</a> for the resources to publish your site.</p>
+
+<p>Here are the steps to set this up.</p>
+
+<h2 id="create-source-branch">Create source branch</h2>
+<p>The <code class="highlighter-rouge">source</code> branch will be the place where your Jekyll project directory is committed. You will add and commit any additional posts or content here. It is from these branch that the site files will be generated. It is a good idea to make this your default branch for the repo.</p>
+
+<h2 id="add-unsupported-gem-theme-to-your-jekyll-project">Add unsupported gem theme to your Jekyll project</h2>
+<p>For this site I decided to use the <a href="https://github.com/yous/whiteglass">whiteglass theme</a>, but you can choose whichever theme you like.</p>
+
+<p>Add the theme to your project’s <code class="highlighter-rouge">Gemfile</code>, in my case:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s2">"jekyll-whiteglass"</span>
+</code></pre></div></div>
+<p>Add the theme and its plugins to <code class="highlighter-rouge">_config.yml</code>:</p>
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">theme</span><span class="pi">:</span> <span class="s">jekyll-whiteglass</span>
+</code></pre></div></div>
+<p>Then install the gem by running the following in the console:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>bundle <span class="nb">install</span>
+</code></pre></div></div>
+<p>Commit all changes, including those to the <code class="highlighter-rouge">Gemfile.lock</code>.</p>
+
+<h2 id="install-and-enable-travis-ci">Install and enable Travis CI</h2>
+<p>Travis CI is free to use on public repos and has deployment support for GitHub Pages built in! But first you must create a Travis CI account and <a href="https://docs.travis-ci.com/user/getting-started/#To-get-started-with-Travis-CI">enable</a> it for your <code class="highlighter-rouge">&lt;your_github_username&gt;.github.io</code> repo, and <a href="https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/">generate an GitHub personal access token</a> so that Travis has permission to automatically commit the built site to master. This token should have the <code class="highlighter-rouge">public_repo</code> scope enabled. Keep this token safe and secrete, don’t commit it!</p>
+
+<p>For this step you will need install the Travis CLI by running:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>gem <span class="nb">install </span>travis
+</code></pre></div></div>
+<p>Login using the personal access token that you generated:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>travis login <span class="nt">--github-token</span> &lt;your_generated_github_access_token&gt;
+</code></pre></div></div>
+<p>Then in your project directory type the following in the console:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>travis init
+</code></pre></div></div>
+<p>Follow the prompts and a <code class="highlighter-rouge">.travis.yml</code> will be added to your project directory. It is in this file that you will configure Travis to build and deploy your site.</p>
+
+<p>Next you will create an encrypted environment variable using the GitHub personal access token and add it to the <code class="highlighter-rouge">.travis.yml</code>. In the console type:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>travis encrypt <span class="nv">GITHUB_TOKEN</span><span class="o">=</span>”&lt;your_generated_github_access_token&gt;” <span class="nt">--add</span>
+</code></pre></div></div>
+<p>Your <code class="highlighter-rouge">.travis.yml</code> file should look something like this:</p>
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">language</span><span class="pi">:</span> <span class="s">ruby</span>
+<span class="na">rvm</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">2.3.4</span>
+<span class="na">env</span><span class="pi">:</span>
+  <span class="na">global</span><span class="pi">:</span>
+    <span class="na">secure</span><span class="pi">:</span> <span class="s">&lt;encrypted_github_token&gt;</span>
+</code></pre></div></div>
+<p>Note: make sure you only have one ruby version listed, or Travis will create builds for each version every time you commit!</p>
+
+<h2 id="add-jekyll-build-rake-task">Add Jekyll build rake task</h2>
+<p>When you commit your Jekyll project to the <code class="highlighter-rouge">source</code> branch, Travis CI will need a way to build the site. For Ruby projects the <a href="https://docs.travis-ci.com/user/languages/ruby/#Default-Build-Script">default build command</a> is <code class="highlighter-rouge">rake</code>, so it makes sense to add a default rake task to your project that does just this.</p>
+
+<p>Add a <code class="highlighter-rouge">Rakefile</code> to the project root containing the following:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">task</span> <span class="ss">:default</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="ss">:jekyll_build</span><span class="p">]</span>
+
+<span class="n">task</span> <span class="ss">:jekyll_build</span> <span class="k">do</span>
+  <span class="sb">`bundle exec jekyll build`</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>When travis runs the <code class="highlighter-rouge">rake</code> command this will run <code class="highlighter-rouge">jekyll build</code> and generate all the files needed for you site in the <code class="highlighter-rouge">_site</code> directory in your project directory.</p>
+
+<h2 id="configure-travis-ci-to-build-and-deploy-site">Configure Travis CI to build and deploy site</h2>
+<p>Now comes the fun part. As I mentioned before Travis <a href="https://docs.travis-ci.com/user/deployment/pages/">supports deployments to GitHub Pages</a>. To do this add the following to your <code class="highlighter-rouge">.travis.yml</code>:</p>
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">deploy</span><span class="pi">:</span>
+  <span class="na">provider</span><span class="pi">:</span> <span class="s">pages</span>
+  <span class="na">skip_cleanup</span><span class="pi">:</span> <span class="no">true</span>
+  <span class="na">github_token</span><span class="pi">:</span> <span class="s2">"</span><span class="s">$GITHUB_TOKEN"</span>
+  <span class="na">local_dir</span><span class="pi">:</span> <span class="s">_site</span>
+  <span class="na">target_branch</span><span class="pi">:</span> <span class="s">master</span>
+  <span class="na">on</span><span class="pi">:</span>
+    <span class="na">branch</span><span class="pi">:</span> <span class="s">source</span>
+</code></pre></div></div>
+
+<p>This deploy process runs after Travis builds the <code class="highlighter-rouge">_site</code> directory. What is does is allows Travis to automatically force commit the generated site files, from the <code class="highlighter-rouge">_site</code> directory, to <code class="highlighter-rouge">master</code> from the <code class="highlighter-rouge">source</code> branch. If you notice the env variable <code class="highlighter-rouge">$GITHUB_TOKEN</code> references the personal access token that you encrypted and added to the <code class="highlighter-rouge">.travis.yml</code>.</p>
+
+<p>Now every time commit and push a change to the <code class="highlighter-rouge">source</code> branch, Travis CI will automatically build and force commit your generated html and css files to <code class="highlighter-rouge">master</code> which then deploys your updated site to GitHub Pages!</p>
+
+<h2 id="going-further">Going further</h2>
+<p>Since you are using Travis CI it doesn’t hurt to add tests as part of the build process! These should obviously run and pass before the deploy process. I wouldn’t recommend doing anything too crazy here. The Jekyll maintainers <a href="http://jekyllrb.com/docs/continuous-integration/travis-ci/">recommend</a> using <a href="https://github.com/gjtorikian/html-proofer">html_proofer</a> to check your generated html.</p>
+
+  </div>
+
+  
+
+</article>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper">
+
+    <p>
+      
+
+&copy; Tom Conroy - Powered by <a href="https://jekyllrb.com">Jekyll</a> &amp; <a href="https://github.com/yous/whiteglass">whiteglass</a> - Subscribe via <a href="http://tbconroy.com/feed.xml">RSS</a>
+
+    </p>
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
